@@ -15,6 +15,9 @@ libraries='[
                 "jar": "dbfs:/FileStore/jars/spark-listeners-loganalytics_3.0.1_2.12-1.0.0.jar"
         },
         {
+                "jar": "dbfs:/FileStore/jars/variant-spark_2.11-0.4.0-SNAPSHOT-all.jar"
+        },
+        {
             "maven": {
                 "coordinates": "com.databricks.labs:overwatch_2.12:0.4.13"
             }

@@ -19,7 +19,6 @@ param eventHubPrivateLinkResource string
 var targetSubResourceDfs = 'dfs'
 var targetSubResourceVault = 'vault'
 var targetSubResourceEventHub = 'namespace'
-var targetSubResourceAml = 'amlworkspace'
 
 @description('Vnet name for private link')
 param vnetName string
@@ -38,12 +37,6 @@ var keyvaultPrivateEndpointName_var = '${keyvaultName}privateendpoint'
 
 var privateDnsNameEventHub_var = 'privatelink.servicebus.windows.net'
 var eventHubPrivateEndpointName_var = '${eventHubName}privateendpoint'
-
-param AmlName string
-param amlPrivateLinkResource string
-var privateDnsNameAmlApi_var = 'privatelink.api.azureml.ms'
-var privateDnsNameAmlNotebook_var = 'privatelink.notebooks.azure.net'
-var amlPrivateEndpointName_var = '${AmlName}privateendpoint'
 
 resource storageAccountPrivateEndpointName 'Microsoft.Network/privateEndpoints@2021-02-01' = {
   name: storageAccountPrivateEndpointName_var
@@ -211,76 +204,3 @@ resource eventHubPrivateEndpointName_default 'Microsoft.Network/privateEndpoints
   }
 }
 
-// Configure Private Link to AML
-resource amlPrivateEndpointName 'Microsoft.Network/privateEndpoints@2021-02-01' = {
-  name: amlPrivateEndpointName_var
-  location: privateLinkLocation
-  properties: {
-    privateLinkServiceConnections: [
-      {
-        name: amlPrivateEndpointName_var
-        properties: {
-          privateLinkServiceId: amlPrivateLinkResource
-          groupIds: [
-            targetSubResourceAml
-          ]
-        }
-      }
-    ]
-    subnet: {
-      id: privateLinkSubnetId
-    }
-  }
-}
-resource privatelink_api_azureml_ms 'Microsoft.Network/privateDnsZones@2018-09-01' = {
-  name: privateDnsNameAmlApi_var
-  location: 'global'
-  properties: {}
-}
-resource privatelink_api_azureml_ms_resourceId_Microsoft_Network_virtualNetworks_parameters_vnetName 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {
-  parent: privatelink_api_azureml_ms
-  name: 'privatelink_api_azureml_ms'
-  location: 'global'
-  properties: {
-    virtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks', vnetName)
-    }
-    registrationEnabled: false
-  }
-}
-resource privatelink_notebooks_azure_net 'Microsoft.Network/privateDnsZones@2018-09-01' = {
-  name: privateDnsNameAmlNotebook_var
-  location: 'global'
-  properties: {}
-}
-resource privatelink_notebooks_azure_net_resourceId_Microsoft_Network_virtualNetworks_parameters_vnetName 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2018-09-01' = {
-  parent: privatelink_notebooks_azure_net
-  name: 'privatelink_notebooks_azure_net'
-  location: 'global'
-  properties: {
-    virtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks', vnetName)
-    }
-    registrationEnabled: false
-  }
-}
-resource privateEndpointName_default 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-03-01' = {
-  parent: amlPrivateEndpointName
-  name: 'default'
-  properties: {
-    privateDnsZoneConfigs: [
-      {
-        name: 'privatelink-api-azureml-ms'
-        properties: {
-          privateDnsZoneId: privatelink_api_azureml_ms.id
-        }
-      }
-      {
-        name: 'privatelink-notebooks-azure-net'
-        properties: {
-          privateDnsZoneId: privatelink_notebooks_azure_net.id
-        }
-      }
-    ]
-  }
-}

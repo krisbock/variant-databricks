@@ -13,14 +13,6 @@ param adminUsername string
 @secure()
 param adminPassword string
 
-@description('The number of nodes for the cluster.')
-@minValue(3)
-@maxValue(50)
-param aksAgentCount int = 3
-
-@description('The size of the VM instances')
-param aksAgentVMSize string = 'Standard_A4_v2'
-
 var uniqueSubString = '${uniqueString(guid(subscription().subscriptionId))}'
 var uString = '${prefix}${uniqueSubString}'
 
@@ -38,18 +30,13 @@ var fwRoutingTable = '${substring(uString, 0, 6)}AdbRoutingTbl'
 var clientPcName = '${substring(uString, 0, 6)}ClientPc'
 var eHNameSpace = '${substring(uString, 0, 6)}eh'
 var adbAkvLinkName = '${substring(uString, 0, 6)}SecretScope'
-var amlWorkspaceName = '${substring(uString, 0, 6)}AmlWksp'
-var containerRegistryName = '${substring(uString, 0, 6)}registry'
-var applicationInsightsName = '${substring(uString, 0, 6)}AppInsights'
-var sslLeafName = '${toLower(substring(uString, 0, 6))}'
-var aksAmlComputeName = 'aks-for-aml'
 // var routeTableName = 'RouteTable'
 // creating the event hub same as namespace
 var eventHubName = eHNameSpace
 var managedIdentityName = '${substring(uString, 0, 6)}Identity'
 
 @description('Default location of the resources')
-param location string = 'southeastasia'
+param location string = 'australiaeast'
 @description('')
 param hubVnetName string = 'hubvnet'
 @description('')
@@ -72,42 +59,52 @@ param PrivateSubnetCidr string = '10.179.0.0/18'
 @description('')
 param PublicSubnetCidr string = '10.179.64.0/18'
 @description('')
-param AksSubnetCidr string = '10.179.128.0/18'
-@description('')
 param PrivateLinkSubnetCidr string = '10.179.192.0/18'
 
-@description('Southeastasia ADB webapp address')
+@description('Australia East ADB webapp address')
 param webappDestinationAddresses array = [
-  '52.187.145.107/32'
-  '52.187.0.85/32'
+  '13.75.218.172/32'
 ]
-@description('Southeastasia ADB log blob')
+@description('Australia East ADB log blob')
 param logBlobstorageDomains array = [
-  'dblogprodseasia.blob.${environment().suffixes.storage}'
+  'dblogprodausteast.blob.${environment().suffixes.storage}'
 ]
-@description('Southeastasia ADB extended ip')
+@description('Australia East ADB extended ip')
 param extendedInfraIp array = [
-  '20.195.104.64/28'
+  '20.53.145.128/28'
 ]
-@description('Southeastasia SCC relay Domain')
+@description('Australia East SCC relay Domain')
 param sccReplayDomain array = [
-  'tunnel.southeastasia.azuredatabricks.net'
+  'tunnel.australiaeast.azuredatabricks.net'
 ]
-@description('Southeastasia SDB metastore')
+@description('Australia East SDB metastore')
 param metastoreDomains array = [
-  'consolidated-southeastasia-prod-metastore.mysql.database.azure.com'
+  'consolidated-australiaeast-prod-metastore.mysql.database.azure.com'
+  'consolidated-australiaeast-prod-metastore-addl-1.mysql.database.azure.com'
 ]
-@description('Southeastasia EventHub endpoint')
+@description('Australia East EventHub endpoint')
 param eventHubEndpointDomain array = [
-  'prod-southeastasia-observabilityeventhubs.servicebus.windows.net'
+  'prod-australiaeast-observabilityeventhubs.servicebus.windows.net'
 ]
-@description('Southeastasia Artifacts Blob')
+@description('Australia East Artifacts Blob')
 param artifactBlobStoragePrimaryDomains array = [
-  'dbartifactsprodseap.blob.${environment().suffixes.storage}'
-  'arprodseapa1.blob.${environment().suffixes.storage}'
-  'arprodseapa2.blob.${environment().suffixes.storage}'
-  'arprodseapa3.blob.${environment().suffixes.storage}'
-  'dbartifactsprodeap.blob.${environment().suffixes.storage}'
+  'dbartifactsprodauste.blob.${environment().suffixes.storage}'
+  'arprodaustea1.blob.${environment().suffixes.storage}'
+  'arprodaustea2.blob.${environment().suffixes.storage}'
+  'arprodaustea3.blob.${environment().suffixes.storage}'
+  'arprodaustea4.blob.${environment().suffixes.storage}'
+  'arprodaustea5.blob.${environment().suffixes.storage}'
+  'arprodaustea6.blob.${environment().suffixes.storage}'
+  'arprodaustea7.blob.${environment().suffixes.storage}'
+  'arprodaustea8.blob.${environment().suffixes.storage}'
+  'arprodaustea9.blob.${environment().suffixes.storage}'
+  'arprodaustea10.blob.${environment().suffixes.storage}'
+  'arprodaustea11.blob.${environment().suffixes.storage}'
+  'arprodaustea12.blob.${environment().suffixes.storage}'
+  'arprodaustea13.blob.${environment().suffixes.storage}'
+  'arprodaustea14.blob.${environment().suffixes.storage}'
+  'arprodaustea15.blob.${environment().suffixes.storage}'
+  'dbartifactsprodaustse.blob.${environment().suffixes.storage}'
 ]
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -155,7 +152,6 @@ module vnets './network/vnet.template.bicep' = {
     privateSubnetCidr: PrivateSubnetCidr
     privatelinkSubnetCidr: PrivateLinkSubnetCidr
     clinetDevicesSubnetCidr: clientDevicesSubnetCidr
-    AksSubnetCidr: AksSubnetCidr
   }
 }
 
@@ -251,8 +247,6 @@ module privateEndPoints './network/privateendpoint.template.bicep' = {
     storageAccountPrivateLinkResource: adlsGen2.outputs.storageaccount_id
     eventHubName: eventHubLogging.outputs.eHName
     eventHubPrivateLinkResource: eventHubLogging.outputs.eHNamespaceId
-    AmlName: aml.name
-    amlPrivateLinkResource: aml.outputs.amlId
     vnetName: vnets.outputs.spokeVnetName
   }
 }
@@ -273,30 +267,6 @@ module createDatabricksCluster './databricks/deployment.template.bicep' = {
     storageKey: adlsGen2.outputs.key1
     evenHubKey: eventHubLogging.outputs.eHPConnString
     eventHubId: eventHubLogging.outputs.eHubNameId
-  }
-}
-
-module aml './aml/machinelearning.template.bicep' = {
-  scope: rg
-  name: 'MLWorkspace'
-  params: {
-    amlWorkspaceName: amlWorkspaceName
-    containerRegistryName: containerRegistryName
-    keyVaultIdentifierId: keyVault.outputs.keyvault_id
-    storageAccount: adlsGen2.outputs.storageaccount_id
-    applicationInsightsName: applicationInsightsName
-  }
-}
-
-module AksForAml './aks/aks-for-aml.template.bicep' = {
-  scope: rg
-  name: 'AksForAml'
-  params: {
-    amlWorkspaceName: aml.outputs.amlWkspName
-    sslLeafName: sslLeafName
-    aksAgentCount:aksAgentCount
-    aksAgentVMSize: aksAgentVMSize
-    aksAmlComputeName: aksAmlComputeName
   }
 }
 
