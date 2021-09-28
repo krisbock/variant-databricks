@@ -5,11 +5,6 @@
 
 <h2 align="center">Secure Databricks cluster with Data exfiltration Protection and Privatelink for Storage, KeyVault and EventHub using <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview" target="_blank">Bicep</a>.</h2>
 
-<p align="center">
-  <a href="https://gitter.im/lordlinus/databricks-bicep?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge">
-  <img src="https://badges.gitter.im/lordlinus/databricks-bicep.svg">
-</p>
-
 
 <p align="center">
   <a href="#key-features">Architecture and Key Features</a> •
@@ -81,7 +76,7 @@ To clone and run this repo, you'll need [Git](https://git-scm.com), [Bicep](http
 From your command line:
 
 ### Option 1:
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flordlinus%2Fdatabricks-all-in-one-bicep-template%2Fmain%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrisbock%2Fvariant-databricks%2Fmain%2Fazuredeploy.json)
 
 Click on the above link to deploy the template.
 
@@ -94,7 +89,7 @@ If you need to customize the template you can use the following command:
 $ git clone https://github.com/krisbock/variant-databricks.git
 
 # Go into the repository
-$ cd databricks-all-in-one-bicep-template
+$ cd variant-databricks
 
 # Update main.bicep file with variables as required. Default is for southeastasia region.
 # Refer to Azure Databricks UDR section under References for region specific parameters.
@@ -128,4 +123,4 @@ MIT
 
 ---
 
-> GitHub [@krisbock](https://github.com/krisbock) &nbsp;&middot;&nbsp
+> GitHub [@krisbock](https://github.com/krisbock)
