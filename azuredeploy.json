@@ -188,9 +188,6 @@
     "clientPcName": "[format('{0}ClientPc', substring(variables('uString'), 0, 6))]",
     "eHNameSpace": "[format('{0}eh', substring(variables('uString'), 0, 6))]",
     "adbAkvLinkName": "[format('{0}SecretScope', substring(variables('uString'), 0, 6))]",
-    "amlWorkspaceName": "[format('{0}AmlWksp', substring(variables('uString'), 0, 6))]",
-    "containerRegistryName": "[format('{0}registry', substring(variables('uString'), 0, 6))]",
-    "applicationInsightsName": "[format('{0}AppInsights', substring(variables('uString'), 0, 6))]",
     "managedIdentityName": "[format('{0}Identity', substring(variables('uString'), 0, 6))]"
   },
   "resources": [
@@ -641,13 +638,7 @@
                 "description": "Cidr range for the private link subnet.."
               }
             },
-            "aksSubnetName": {
-              "type": "string",
-              "defaultValue": "aks-subnet",
-              "metadata": {
-                "description": "The name of the private subnet to create."
-              }
-            },
+
             "clinetDevicesSubnetCidr": {
               "type": "string"
             }
@@ -3254,125 +3245,6 @@
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'LogAnalytics')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'ManagedIdentity')]",
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
-      "name": "MLWorkspace",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "amlWorkspaceName": {
-            "value": "[variables('amlWorkspaceName')]"
-          },
-          "containerRegistryName": {
-            "value": "[variables('containerRegistryName')]"
-          },
-          "keyVaultIdentifierId": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault'), '2019-10-01').outputs.keyvault_id.value]"
-          },
-          "storageAccount": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount'), '2019-10-01').outputs.storageaccount_id.value]"
-          },
-          "applicationInsightsName": {
-            "value": "[variables('applicationInsightsName')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.451.19169",
-              "templateHash": "6142225160810949830"
-            }
-          },
-          "parameters": {
-            "keyVaultIdentifierId": {
-              "type": "string"
-            },
-            "storageAccount": {
-              "type": "string"
-            },
-            "amlWorkspaceName": {
-              "type": "string"
-            },
-            "containerRegistryName": {
-              "type": "string"
-            },
-            "applicationInsightsName": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.ContainerRegistry/registries",
-              "apiVersion": "2021-06-01-preview",
-              "name": "[parameters('containerRegistryName')]",
-              "location": "[resourceGroup().location]",
-              "sku": {
-                "name": "Basic"
-              }
-            },
-            {
-              "type": "Microsoft.Insights/components",
-              "apiVersion": "2018-05-01-preview",
-              "name": "[parameters('applicationInsightsName')]",
-              "location": "[resourceGroup().location]",
-              "kind": "web",
-              "properties": {
-                "Application_Type": "web"
-              }
-            },
-            {
-              "type": "Microsoft.MachineLearningServices/workspaces",
-              "apiVersion": "2021-04-01",
-              "name": "[parameters('amlWorkspaceName')]",
-              "location": "[resourceGroup().location]",
-              "identity": {
-                "type": "SystemAssigned"
-              },
-              "properties": {
-                "friendlyName": "[parameters('amlWorkspaceName')]",
-                "storageAccount": "[parameters('storageAccount')]",
-                "keyVault": "[parameters('keyVaultIdentifierId')]",
-                "applicationInsights": "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "containerRegistry": "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
-                "allowPublicAccessWhenBehindVnet": false
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
-                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
-              ]
-            }
-          ],
-          "outputs": {
-            "amlId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('amlWorkspaceName'))]"
-            },
-            "amlWkspName": {
-              "type": "string",
-              "value": "[parameters('amlWorkspaceName')]"
-            },
-            "amlProperties": {
-              "type": "object",
-              "value": "[reference(resourceId('Microsoft.MachineLearningServices/workspaces', parameters('amlWorkspaceName')))]"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault')]",
         "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
       ]
     }
