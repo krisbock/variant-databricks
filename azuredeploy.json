@@ -2474,18 +2474,6 @@
           "storageAccountPrivateLinkResource": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount'), '2019-10-01').outputs.storageaccount_id.value]"
           },
-          "eventHubName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'EventHub'), '2019-10-01').outputs.eHName.value]"
-          },
-          "eventHubPrivateLinkResource": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'EventHub'), '2019-10-01').outputs.eHNamespaceId.value]"
-          },
-          "AmlName": {
-            "value": "MLWorkspace"
-          },
-          "amlPrivateLinkResource": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'MLWorkspace'), '2019-10-01').outputs.amlId.value]"
-          },
           "vnetName": {
             "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'HubandSpokeVnets'), '2019-10-01').outputs.spokeVnetName.value]"
           }
@@ -2568,16 +2556,10 @@
             "targetSubResourceDfs": "dfs",
             "targetSubResourceVault": "vault",
             "targetSubResourceEventHub": "namespace",
-            "targetSubResourceAml": "amlworkspace",
             "privateDnsNameStorage_var": "[format('privatelink.dfs.{0}', environment().suffixes.storage)]",
             "storageAccountPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('storageAccountName'))]",
             "privateDnsNameVault_var": "privatelink.vaultcore.azure.net",
-            "keyvaultPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('keyvaultName'))]",
-            "privateDnsNameEventHub_var": "privatelink.servicebus.windows.net",
-            "eventHubPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('eventHubName'))]",
-            "privateDnsNameAmlApi_var": "privatelink.api.azureml.ms",
-            "privateDnsNameAmlNotebook_var": "privatelink.notebooks.azure.net",
-            "amlPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('AmlName'))]"
+            "keyvaultPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('keyvaultName'))]"
           },
           "resources": [
             {
@@ -2714,173 +2696,11 @@
                 "[resourceId('Microsoft.Network/privateEndpoints', variables('keyvaultPrivateEndpointName_var'))]",
                 "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameVault_var'))]"
               ]
-            },
-            {
-              "type": "Microsoft.Network/privateEndpoints",
-              "apiVersion": "2021-02-01",
-              "name": "[variables('eventHubPrivateEndpointName_var')]",
-              "location": "[parameters('privateLinkLocation')]",
-              "properties": {
-                "privateLinkServiceConnections": [
-                  {
-                    "name": "[variables('eventHubPrivateEndpointName_var')]",
-                    "properties": {
-                      "privateLinkServiceId": "[parameters('eventHubPrivateLinkResource')]",
-                      "groupIds": [
-                        "[variables('targetSubResourceEventHub')]"
-                      ]
-                    }
-                  }
-                ],
-                "subnet": {
-                  "id": "[parameters('privateLinkSubnetId')]"
-                }
-              }
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-06-01",
-              "name": "[variables('privateDnsNameEventHub_var')]",
-              "location": "global",
-              "tags": {},
-              "properties": {},
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', variables('eventHubPrivateEndpointName_var'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-              "apiVersion": "2020-06-01",
-              "name": "[format('{0}/{1}', variables('privateDnsNameEventHub_var'), parameters('vnetName'))]",
-              "location": "global",
-              "properties": {
-                "virtualNetwork": {
-                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-                },
-                "registrationEnabled": false
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameEventHub_var'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-              "apiVersion": "2021-02-01",
-              "name": "[format('{0}/{1}', variables('eventHubPrivateEndpointName_var'), 'default')]",
-              "properties": {
-                "privateDnsZoneConfigs": [
-                  {
-                    "name": "privatelink-servicebus-windows-net",
-                    "properties": {
-                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameEventHub_var'))]"
-                    }
-                  }
-                ]
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', variables('eventHubPrivateEndpointName_var'))]",
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameEventHub_var'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Network/privateEndpoints",
-              "apiVersion": "2021-02-01",
-              "name": "[variables('amlPrivateEndpointName_var')]",
-              "location": "[parameters('privateLinkLocation')]",
-              "properties": {
-                "privateLinkServiceConnections": [
-                  {
-                    "name": "[variables('amlPrivateEndpointName_var')]",
-                    "properties": {
-                      "privateLinkServiceId": "[parameters('amlPrivateLinkResource')]",
-                      "groupIds": [
-                        "[variables('targetSubResourceAml')]"
-                      ]
-                    }
-                  }
-                ],
-                "subnet": {
-                  "id": "[parameters('privateLinkSubnetId')]"
-                }
-              }
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2018-09-01",
-              "name": "[variables('privateDnsNameAmlApi_var')]",
-              "location": "global",
-              "properties": {}
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-              "apiVersion": "2018-09-01",
-              "name": "[format('{0}/{1}', variables('privateDnsNameAmlApi_var'), 'privatelink_api_azureml_ms')]",
-              "location": "global",
-              "properties": {
-                "virtualNetwork": {
-                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-                },
-                "registrationEnabled": false
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlApi_var'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2018-09-01",
-              "name": "[variables('privateDnsNameAmlNotebook_var')]",
-              "location": "global",
-              "properties": {}
-            },
-            {
-              "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-              "apiVersion": "2018-09-01",
-              "name": "[format('{0}/{1}', variables('privateDnsNameAmlNotebook_var'), 'privatelink_notebooks_azure_net')]",
-              "location": "global",
-              "properties": {
-                "virtualNetwork": {
-                  "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-                },
-                "registrationEnabled": false
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlNotebook_var'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-              "apiVersion": "2020-03-01",
-              "name": "[format('{0}/{1}', variables('amlPrivateEndpointName_var'), 'default')]",
-              "properties": {
-                "privateDnsZoneConfigs": [
-                  {
-                    "name": "privatelink-api-azureml-ms",
-                    "properties": {
-                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlApi_var'))]"
-                    }
-                  },
-                  {
-                    "name": "privatelink-notebooks-azure-net",
-                    "properties": {
-                      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlNotebook_var'))]"
-                    }
-                  }
-                ]
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', variables('amlPrivateEndpointName_var'))]",
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlApi_var'))]",
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateDnsNameAmlNotebook_var'))]"
-              ]
-            }
-          ]
+            }          ]
         }
       },
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'MLWorkspace')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'EventHub')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault')]",
         "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'HubandSpokeVnets')]"
