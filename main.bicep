@@ -3,7 +3,7 @@ targetScope = 'subscription'
 @minLength(2)
 @maxLength(4)
 @description('2-4 chars to prefix the Azure resources, NOTE: no number or symbols')
-param prefix string = 'ab'
+param prefix string = 'kab'
 
 @description('Client PC username, NOTE: do not use admin')
 param adminUsername string
@@ -31,8 +31,7 @@ var clientPcName = '${substring(uString, 0, 6)}ClientPc'
 var eHNameSpace = '${substring(uString, 0, 6)}eh'
 var adbAkvLinkName = '${substring(uString, 0, 6)}SecretScope'
 // var routeTableName = 'RouteTable'
-// creating the event hub same as namespace
-var eventHubName = eHNameSpace
+
 var managedIdentityName = '${substring(uString, 0, 6)}Identity'
 
 @description('Default location of the resources')

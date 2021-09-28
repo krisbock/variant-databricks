@@ -40,11 +40,11 @@ export DB_CLUSTER_ID=$DB_CLUSTER_ID
 export DB_CLUSTER_NAME=$DB_CLUSTER_NAME
 # export LOG_ANALYTICS_WORKSPACE_ID=$LOG_ANALYTICS_WKSP_ID
 # export LOG_ANALYTICS_WORKSPACE_KEY=$LOG_ANALYTICS_WKSP_KEY
-export AZ_SUBSCRIPTION_ID=
-export AZ_RSRC_GRP_NAME=
-export AZ_RSRC_PROV_NAMESPACE=
-export AZ_RSRC_TYPE=
-export AZ_RSRC_NAME=
+export AZ_SUBSCRIPTION_ID=3c8972d9-f541-46b2-b70b-d81baba3595d
+export AZ_RSRC_GRP_NAME=kab5qd-rg
+export AZ_RSRC_PROV_NAMESPACE=Microsoft.Databricks
+export AZ_RSRC_TYPE=workspaces
+export AZ_RSRC_NAME=kab5qdAdbWksp
 
 # Note: All REGEX filters below are implemented with java.lang.String.matches(...).  This implementation essentially appends ^...$ around
 # the regular expression, so the entire string must match the regex.  If you need to allow for other values you should include .* before and/or
