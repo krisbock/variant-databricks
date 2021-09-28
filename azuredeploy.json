@@ -11,7 +11,7 @@
   "parameters": {
     "prefix": {
       "type": "string",
-      "defaultValue": "ab",
+      "defaultValue": "vs",
       "metadata": {
         "description": "2-4 chars to prefix the Azure resources, NOTE: no number or symbols"
       },
@@ -31,25 +31,9 @@
         "description": "Client PC password, with atleast 8 char length containing uppercase, digits and special characters "
       }
     },
-    "aksAgentCount": {
-      "type": "int",
-      "defaultValue": 3,
-      "maxValue": 50,
-      "minValue": 3,
-      "metadata": {
-        "description": "The number of nodes for the cluster."
-      }
-    },
-    "aksAgentVMSize": {
-      "type": "string",
-      "defaultValue": "Standard_A4_v2",
-      "metadata": {
-        "description": "The size of the VM instances"
-      }
-    },
     "location": {
       "type": "string",
-      "defaultValue": "southeastasia",
+      "defaultValue": "australiaeast",
       "metadata": {
         "description": "Default location of the resources"
       }
@@ -110,13 +94,6 @@
         "description": ""
       }
     },
-    "AksSubnetCidr": {
-      "type": "string",
-      "defaultValue": "10.179.128.0/18",
-      "metadata": {
-        "description": ""
-      }
-    },
     "PrivateLinkSubnetCidr": {
       "type": "string",
       "defaultValue": "10.179.192.0/18",
@@ -127,69 +104,72 @@
     "webappDestinationAddresses": {
       "type": "array",
       "defaultValue": [
-        "52.187.145.107/32",
-        "52.187.0.85/32"
+        "13.75.218.172/32"
       ],
       "metadata": {
-        "description": "Southeastasia ADB webapp address"
+        "description": "Australia East ADB webapp address"
       }
     },
     "logBlobstorageDomains": {
       "type": "array",
       "defaultValue": [
-        "[format('dblogprodseasia.blob.{0}', environment().suffixes.storage)]"
+        "[format('dblogprodausteast.blob.{0}', environment().suffixes.storage)]"
       ],
       "metadata": {
-        "description": "Southeastasia ADB log blob"
+        "description": "Australia East ADB log blob"
       }
     },
     "extendedInfraIp": {
       "type": "array",
       "defaultValue": [
-        "20.195.104.64/28"
+        "20.53.145.128/28"
       ],
       "metadata": {
-        "description": "Southeastasia ADB extended ip"
+        "description": "Australia East ADB extended ip"
       }
     },
     "sccReplayDomain": {
       "type": "array",
       "defaultValue": [
-        "tunnel.southeastasia.azuredatabricks.net"
+        "tunnel.australiaeast.azuredatabricks.net"
       ],
       "metadata": {
-        "description": "Southeastasia SCC relay Domain"
+        "description": "Australia East SCC relay Domain"
       }
     },
     "metastoreDomains": {
       "type": "array",
       "defaultValue": [
-        "consolidated-southeastasia-prod-metastore.mysql.database.azure.com"
+        "consolidated-australiaeast-prod-metastore.mysql.database.azure.com",
+        "consolidated-australiaeast-prod-metastore-addl-1.mysql.database.azure.com"
       ],
       "metadata": {
-        "description": "Southeastasia SDB metastore"
-      }
-    },
-    "eventHubEndpointDomain": {
-      "type": "array",
-      "defaultValue": [
-        "prod-southeastasia-observabilityeventhubs.servicebus.windows.net"
-      ],
-      "metadata": {
-        "description": "Southeastasia EventHub endpoint"
+        "description": "Australia East SDB metastore"
       }
     },
     "artifactBlobStoragePrimaryDomains": {
       "type": "array",
       "defaultValue": [
-        "[format('dbartifactsprodseap.blob.{0}', environment().suffixes.storage)]",
-        "[format('arprodseapa1.blob.{0}', environment().suffixes.storage)]",
-        "[format('arprodseapa2.blob.{0}', environment().suffixes.storage)]",
-        "[format('arprodseapa3.blob.{0}', environment().suffixes.storage)]",
-        "[format('dbartifactsprodeap.blob.{0}', environment().suffixes.storage)]"
+        "[format('dbartifactsprodauste.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea1.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea2.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea3.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea4.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea5.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea6.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea7.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea8.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea9.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea10.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea11.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea12.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea13.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea14.blob.blob.{0}', environment().suffixes.storage)]",
+        "[format('arprodaustea15.blob.{0}', environment().suffixes.storage)]",
+        "[format('dbartifactsprodaustse.blob.{0}', environment().suffixes.storage)]"
       ],
       "metadata": {
-        "description": "Southeastasia Artifacts Blob"
+        "description": "Australia East Artifacts Blob"
       }
     }
   },
@@ -211,9 +191,6 @@
     "amlWorkspaceName": "[format('{0}AmlWksp', substring(variables('uString'), 0, 6))]",
     "containerRegistryName": "[format('{0}registry', substring(variables('uString'), 0, 6))]",
     "applicationInsightsName": "[format('{0}AppInsights', substring(variables('uString'), 0, 6))]",
-    "sslLeafName": "[toLower(substring(variables('uString'), 0, 6))]",
-    "aksAmlComputeName": "aks-for-aml",
-    "eventHubName": "[variables('eHNameSpace')]",
     "managedIdentityName": "[format('{0}Identity', substring(variables('uString'), 0, 6))]"
   },
   "resources": [
@@ -556,9 +533,6 @@
           },
           "clinetDevicesSubnetCidr": {
             "value": "[parameters('clientDevicesSubnetCidr')]"
-          },
-          "AksSubnetCidr": {
-            "value": "[parameters('AksSubnetCidr')]"
           }
         },
         "template": {
@@ -672,12 +646,6 @@
               "defaultValue": "aks-subnet",
               "metadata": {
                 "description": "The name of the private subnet to create."
-              }
-            },
-            "AksSubnetCidr": {
-              "type": "string",
-              "metadata": {
-                "description": "Cidr range for the AKS subnet.."
               }
             },
             "clinetDevicesSubnetCidr": {
@@ -812,13 +780,6 @@
                       "delegations": [],
                       "privateEndpointNetworkPolicies": "Disabled",
                       "privateLinkServiceNetworkPolicies": "Enabled"
-                    }
-                  },
-                  {
-                    "name": "[parameters('aksSubnetName')]",
-                    "properties": {
-                      "addressPrefix": "[parameters('AksSubnetCidr')]",
-                      "delegations": []
                     }
                   }
                 ],
@@ -1193,9 +1154,6 @@
           },
           "metastoreDomains": {
             "value": "[parameters('metastoreDomains')]"
-          },
-          "eventHubEndpointDomains": {
-            "value": "[parameters('eventHubEndpointDomain')]"
           },
           "artifactBlobStoragePrimaryDomains": {
             "value": "[parameters('artifactBlobStoragePrimaryDomains')]"
@@ -3050,9 +3008,6 @@
             },
             "storageKey": {
               "type": "string"
-            },
-            "evenHubKey": {
-              "type": "string"
             }
           },
           "functions": [],
@@ -3140,10 +3095,6 @@
                   {
                     "name": "STORAGE_ACCESS_KEY",
                     "value": "[parameters('storageKey')]"
-                  },
-                  {
-                    "name": "EVENT_HUB_KEY",
-                    "value": "[parameters('evenHubKey')]"
                   },
                   {
                     "name": "ADB_PAT_TOKEN",
@@ -3422,96 +3373,6 @@
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault')]",
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
-      "name": "AksForAml",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "amlWorkspaceName": {
-            "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'MLWorkspace'), '2019-10-01').outputs.amlWkspName.value]"
-          },
-          "sslLeafName": {
-            "value": "[variables('sslLeafName')]"
-          },
-          "aksAgentCount": {
-            "value": "[parameters('aksAgentCount')]"
-          },
-          "aksAgentVMSize": {
-            "value": "[parameters('aksAgentVMSize')]"
-          },
-          "aksAmlComputeName": {
-            "value": "[variables('aksAmlComputeName')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.451.19169",
-              "templateHash": "8227777565612509437"
-            }
-          },
-          "parameters": {
-            "amlWorkspaceName": {
-              "type": "string"
-            },
-            "sslLeafName": {
-              "type": "string"
-            },
-            "aksAgentCount": {
-              "type": "int"
-            },
-            "aksAgentVMSize": {
-              "type": "string"
-            },
-            "aksAmlComputeName": {
-              "type": "string"
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.MachineLearningServices/workspaces/computes",
-              "apiVersion": "2021-07-01",
-              "name": "[format('{0}/{1}', parameters('amlWorkspaceName'), parameters('aksAmlComputeName'))]",
-              "location": "[resourceGroup().location]",
-              "properties": {
-                "computeType": "AKS",
-                "computeLocation": "[resourceGroup().location]",
-                "description": "AKS cluster to provide inference REST endpoint",
-                "properties": {
-                  "loadBalancerType": "PublicIp",
-                  "agentCount": "[parameters('aksAgentCount')]",
-                  "agentVmSize": "[parameters('aksAgentVMSize')]",
-                  "aksNetworkingConfiguration": {
-                    "dnsServiceIP": "10.0.0.1",
-                    "dockerBridgeCidr": "172.17.0.1/16",
-                    "serviceCidr": "10.0.0.0/16"
-                  },
-                  "clusterPurpose": "FastProd",
-                  "sslConfiguration": {
-                    "leafDomainLabel": "[parameters('sslLeafName')]",
-                    "status": "Auto"
-                  }
-                }
-              }
-            }
-          ]
-        }
-      },
-      "dependsOn": [
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'MLWorkspace')]",
         "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
       ]
     }
