@@ -21,9 +21,9 @@
   <a href="#license">License</a>
 </p>
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Flordlinus%2Fdatabricks-all-in-one-bicep-template%2Fmain%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkrisbock%2Fvariant-databricks%2Fmain%2Fazuredeploy.json)
 
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Flordlinus%2Fdatabricks-all-in-one-bicep-template%2Fmain%2Fazuredeploy.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fkrisbock%2Fvariant-databricks%2Fmain%2Fazuredeploy.json)
 
 ## Why Bicep?
 
@@ -31,7 +31,7 @@ Bicep is free and supported by Microsoft support and is fun, easy, and productiv
 More resources available at this [Link](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview#benefits-of-bicep-versus-other-tools)
 
 ## Architecture and Key Features
-![Architecture](https://raw.githubusercontent.com/lordlinus/databricks-all-in-one-bicep-template/main/Architecture.jpg)
+![Architecture](https://raw.githubusercontent.com/krisbock/variant-databricks/main/Architecture.jpg)
 
 * Based on best practices from <a href="https://github.com/Azure/AzureDatabricksBestPractices/blob/master/toc.md">Azure Databricks Best Practices</a> and template from <a href="https://github.com/Azure-Samples/modern-data-warehouse-dataops/tree/main/single_tech_samples/databricks/sample2_enterprise_azure_databricks_environment">Anti-Data-Exfiltration Reference architecture</a>
 * Hub and Spoke VNETs.[Link](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/hybrid-networking/hub-spoke?tabs=bicep)
@@ -91,7 +91,7 @@ If you need to customize the template you can use the following command:
 
 ```bash
 # Clone this repository
-$ git clone https://github.com/lordlinus/databricks-all-in-one-bicep-template.git
+$ git clone https://github.com/krisbock/variant-databricks.git
 
 # Go into the repository
 $ cd databricks-all-in-one-bicep-template
@@ -109,7 +109,7 @@ Note: Build script assume Linux environment, If you're using Windows, [see this 
 ## Credits
 
 This template is based on ARM templates from the below repo:
-
+- [Azure One-Click-Databricks](https://github.com/Azure/one-click-databricks)
 - [Modern-data-warehouse-dataops](https://github.com/Azure-Samples/modern-data-warehouse-dataops)
 - [Azure PrivateLink Templates](https://github.com/dmauser/PrivateLink)
 
@@ -128,6 +128,4 @@ MIT
 
 ---
 
-> GitHub [@lordlinus](https://github.com/lordlinus) &nbsp;&middot;&nbsp;
-> Twitter [@lordlinus](https://twitter.com/lordlinus) &nbsp;&middot;&nbsp;
-> Linkedin [Sunil Sattiraju](https://www.linkedin.com/in/sunilsattiraju/)
+> GitHub [@krisbock](https://github.com/krisbock) &nbsp;&middot;&nbsp
