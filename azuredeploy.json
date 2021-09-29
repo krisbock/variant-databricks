@@ -113,7 +113,7 @@
     "logBlobstorageDomains": {
       "type": "array",
       "defaultValue": [
-        "[format('dblogprodausteast.blob.{0}', environment().suffixes.storage)]"
+        "dblogprodausteast.blob.core.windows.net"
       ],
       "metadata": {
         "description": "Australia East ADB log blob"
