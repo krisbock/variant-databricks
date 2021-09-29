@@ -81,10 +81,6 @@ param metastoreDomains array = [
   'consolidated-australiaeast-prod-metastore.mysql.database.azure.com'
   'consolidated-australiaeast-prod-metastore-addl-1.mysql.database.azure.com'
 ]
-@description('Australia East EventHub endpoint')
-param eventHubEndpointDomain array = [
-  'prod-australiaeast-observabilityeventhubs.servicebus.windows.net'
-]
 @description('Australia East Artifacts Blob')
 param artifactBlobStoragePrimaryDomains array = [
   'dbartifactsprodauste.blob.${environment().suffixes.storage}'
@@ -183,7 +179,6 @@ module hubFirewall './network/firewall.template.bicep' = {
     infrastructureDestinationAddresses: extendedInfraIp
     sccRelayDomains: sccReplayDomain
     metastoreDomains: metastoreDomains
-    eventHubEndpointDomains: eventHubEndpointDomain
     artifactBlobStoragePrimaryDomains: artifactBlobStoragePrimaryDomains
     dbfsBlobStrageDomain: array('${adb.outputs.databricks_dbfs_storage_accountName}.blob.${environment().suffixes.storage}')
     clientPrivateIpAddr: clientpc.outputs.clientPrivateIpaddr

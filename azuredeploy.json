@@ -2513,18 +2513,6 @@
                 "description": "keyvault name."
               }
             },
-            "eventHubName": {
-              "type": "string",
-              "metadata": {
-                "description": "event hub name."
-              }
-            },
-            "eventHubPrivateLinkResource": {
-              "type": "string",
-              "metadata": {
-                "description": "EventHub Private Link resource."
-              }
-            },
             "vnetName": {
               "type": "string",
               "metadata": {
@@ -2543,19 +2531,12 @@
               "metadata": {
                 "description": "Privatelink subnet Id"
               }
-            },
-            "AmlName": {
-              "type": "string"
-            },
-            "amlPrivateLinkResource": {
-              "type": "string"
             }
           },
           "functions": [],
           "variables": {
             "targetSubResourceDfs": "dfs",
             "targetSubResourceVault": "vault",
-            "targetSubResourceEventHub": "namespace",
             "privateDnsNameStorage_var": "[format('privatelink.dfs.{0}', environment().suffixes.storage)]",
             "storageAccountPrivateEndpointName_var": "[format('{0}privateendpoint', parameters('storageAccountName'))]",
             "privateDnsNameVault_var": "privatelink.vaultcore.azure.net",
