@@ -392,20 +392,6 @@
                       "priority": 103,
                       "direction": "Outbound"
                     }
-                  },
-                  {
-                    "name": "Microsoft.Databricks-workspaces_UseOnly_databricks-worker-to-eventhub",
-                    "properties": {
-                      "description": "Required for worker communication with Azure Eventhub services.",
-                      "protocol": "Tcp",
-                      "sourcePortRange": "*",
-                      "destinationPortRange": "9093",
-                      "sourceAddressPrefix": "VirtualNetwork",
-                      "destinationAddressPrefix": "EventHub",
-                      "access": "Allow",
-                      "priority": 104,
-                      "direction": "Outbound"
-                    }
                   }
                 ]
               }
@@ -1240,13 +1226,6 @@
                 "description": "List of Metastore domain name"
               }
             },
-            "eventHubEndpointDomains": {
-              "type": "array",
-              "defaultValue": [],
-              "metadata": {
-                "description": "List of Event Hub endpoint domain name"
-              }
-            },
             "artifactBlobStoragePrimaryDomains": {
               "type": "array",
               "defaultValue": [],
@@ -1397,22 +1376,6 @@
                           "sourceIpGroups": [],
                           "destinationIpGroups": [],
                           "destinationFqdns": "[parameters('metastoreDomains')]",
-                          "destinationPorts": [
-                            "*"
-                          ]
-                        },
-                        {
-                          "name": "Event Hub endpoint",
-                          "protocols": [
-                            "TCP"
-                          ],
-                          "sourceAddresses": [
-                            "*"
-                          ],
-                          "destinationAddresses": [],
-                          "sourceIpGroups": [],
-                          "destinationIpGroups": [],
-                          "destinationFqdns": "[parameters('eventHubEndpointDomains')]",
                           "destinationPorts": [
                             "*"
                           ]
@@ -2325,132 +2288,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
-      "name": "EventHub",
-      "resourceGroup": "[variables('resourceGroupName')]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "namespaceName": {
-            "value": "[variables('eHNameSpace')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.4.451.19169",
-              "templateHash": "12808161703233656485"
-            }
-          },
-          "parameters": {
-            "namespaceName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name for the Event Hub cluster."
-              }
-            },
-            "eventHubName": {
-              "type": "string",
-              "defaultValue": "[parameters('namespaceName')]",
-              "metadata": {
-                "description": "Name for the Event Hub to be created in the Event Hub namespace within the Event Hub cluster."
-              }
-            },
-            "location": {
-              "type": "string",
-              "defaultValue": "[resourceGroup().location]",
-              "metadata": {
-                "description": "Specifies the Azure location for all resources."
-              }
-            },
-            "eHRuleName": {
-              "type": "string",
-              "defaultValue": "rule",
-              "metadata": {
-                "description": ""
-              }
-            }
-          },
-          "functions": [],
-          "resources": [
-            {
-              "type": "Microsoft.EventHub/namespaces",
-              "apiVersion": "2021-01-01-preview",
-              "name": "[parameters('namespaceName')]",
-              "location": "[parameters('location')]",
-              "sku": {
-                "name": "Standard",
-                "tier": "Standard",
-                "capacity": 1
-              },
-              "properties": {
-                "isAutoInflateEnabled": false,
-                "maximumThroughputUnits": 0
-              }
-            },
-            {
-              "type": "Microsoft.EventHub/namespaces/eventhubs",
-              "apiVersion": "2021-01-01-preview",
-              "name": "[format('{0}/{1}', parameters('namespaceName'), parameters('eventHubName'))]",
-              "properties": {
-                "messageRetentionInDays": 7,
-                "partitionCount": 1
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaceName'))]"
-              ]
-            },
-            {
-              "type": "Microsoft.EventHub/namespaces/eventhubs/authorizationRules",
-              "apiVersion": "2021-01-01-preview",
-              "name": "[format('{0}/{1}/{2}', parameters('namespaceName'), parameters('eventHubName'), parameters('eHRuleName'))]",
-              "properties": {
-                "rights": [
-                  "Send",
-                  "Listen"
-                ]
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaceName'), parameters('eventHubName'))]"
-              ]
-            }
-          ],
-          "outputs": {
-            "eHNamespaceId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.EventHub/namespaces', parameters('namespaceName'))]"
-            },
-            "eHubNameId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.EventHub/namespaces/eventhubs', parameters('namespaceName'), parameters('eventHubName'))]"
-            },
-            "eHAuthRulesId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', split(format('{0}/{1}/{2}', parameters('namespaceName'), parameters('eventHubName'), parameters('eHRuleName')), '/')[0], split(format('{0}/{1}/{2}', parameters('namespaceName'), parameters('eventHubName'), parameters('eHRuleName')), '/')[1], split(format('{0}/{1}/{2}', parameters('namespaceName'), parameters('eventHubName'), parameters('eHRuleName')), '/')[2])]"
-            },
-            "eHPConnString": {
-              "type": "string",
-              "value": "[listKeys(resourceId('Microsoft.EventHub/namespaces/eventhubs/authorizationRules', parameters('namespaceName'), parameters('eventHubName'), parameters('eHRuleName')), '2021-01-01-preview').primaryConnectionString]"
-            },
-            "eHName": {
-              "type": "string",
-              "value": "[parameters('eventHubName')]"
-            }
-          }
-        }
-      },
-      "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
       "name": "PrivateEndPoints",
       "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
@@ -2893,7 +2730,7 @@
                     "value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', 'createAdbPATToken')).outputs.token_value]"
                   }
                 ],
-                "scriptContent": "#/bin/bash -e\n\n# TODO: Create AKV backed secret scope using User assigned managed identity. Currently not supported\n# akv_backed='{\"resource_id\": \"'${AKV_ID}'\",\"dns_name\": \"'${AKV_URI}'\"}'\n# akv_secret_scope_payload=$(\n#     jq -n -c \\\n#         --arg sc \"akv_test\" \\\n#         --arg bak \"$akv_backed\" \\\n#         '{\n#         scope: $sc,\n#         scope_backend_type: \"AZURE_KEYVAULT\",\n#         initial_manage_principal: \"users\",\n#         backend_azure_keyvault: ($bak|fromjson)\n#      }'\n# )\n\n# Create secret scope backed by ADB\nadb_secret_scope_payload=$(\n    jq -n -c \\\n        --arg sc \"$ADB_SECRET_SCOPE_NAME\" \\\n        '{\n        scope: $sc,\n        initial_manage_principal: \"users\"\n     }'\n)\n\nadbGlobalToken=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --output json | jq -r .accessToken)\nazureApiToken=$(az account get-access-token --resource https://management.core.windows.net/ --output json | jq -r .accessToken)\n\nauthHeader=\"Authorization: Bearer $adbGlobalToken\"\nadbSPMgmtToken=\"X-Databricks-Azure-SP-Management-Token:$azureApiToken\"\nadbResourceId=\"X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID\"\n\necho \"Create ADB secret scope backed by Databricks key vault\"\njson=$(echo $adb_secret_scope_payload | curl -sS -X POST -H \"$authHeader\" -H \"$adbSPMgmtToken\" -H \"$adbResourceId\" --data-binary \"@-\" \"https://${ADB_WORKSPACE_URL}/api/2.0/secrets/scopes/create\")\n\nfunction createKey() {\n    local keyName=$1\n    local secretValue=$2\n    json_payload=$(\n        jq -n -c \\\n            --arg sc \"$ADB_SECRET_SCOPE_NAME\" \\\n            --arg k \"$keyName\" \\\n            --arg v \"$secretValue\" \\\n            '{\n            scope: $sc,\n            key: $k,\n            string_value: $v\n        }'\n    )\n    response=$(echo $json_payload | curl -sS -X POST -H \"$authHeader\" -H \"$adbSPMgmtToken\" -H \"$adbResourceId\" --data-binary \"@-\" \"https://${ADB_WORKSPACE_URL}/api/2.0/secrets/put\")\n    echo $response\n\n}\n\ncreateKey \"LogAWkspId\" \"$ADB_LOG_WKSP_ID\"\ncreateKey \"LogAWkspkey\" \"$ADB_LOG_WKSP_KEY\"\nC_ADB_PAT_TOKEN=$(sed -e 's/[\\\"\\\\]//g' <<<$ADB_PAT_TOKEN)\ncreateKey \"dbPATKey\" \"$C_ADB_PAT_TOKEN\"\ncreateKey \"ehKey\" \"$EVENT_HUB_KEY\"\ncreateKey \"stgAccessKey\" \"$STORAGE_ACCESS_KEY\"\n\necho \"$json\" >\"$AZ_SCRIPTS_OUTPUT_PATH\"\n\n# tail -f /dev/null"
+                "scriptContent": "#/bin/bash -e\n\n# TODO: Create AKV backed secret scope using User assigned managed identity. Currently not supported\n# akv_backed='{\"resource_id\": \"'${AKV_ID}'\",\"dns_name\": \"'${AKV_URI}'\"}'\n# akv_secret_scope_payload=$(\n#     jq -n -c \\\n#         --arg sc \"akv_test\" \\\n#         --arg bak \"$akv_backed\" \\\n#         '{\n#         scope: $sc,\n#         scope_backend_type: \"AZURE_KEYVAULT\",\n#         initial_manage_principal: \"users\",\n#         backend_azure_keyvault: ($bak|fromjson)\n#      }'\n# )\n\n# Create secret scope backed by ADB\nadb_secret_scope_payload=$(\n    jq -n -c \\\n        --arg sc \"$ADB_SECRET_SCOPE_NAME\" \\\n        '{\n        scope: $sc,\n        initial_manage_principal: \"users\"\n     }'\n)\n\nadbGlobalToken=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --output json | jq -r .accessToken)\nazureApiToken=$(az account get-access-token --resource https://management.core.windows.net/ --output json | jq -r .accessToken)\n\nauthHeader=\"Authorization: Bearer $adbGlobalToken\"\nadbSPMgmtToken=\"X-Databricks-Azure-SP-Management-Token:$azureApiToken\"\nadbResourceId=\"X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID\"\n\necho \"Create ADB secret scope backed by Databricks key vault\"\njson=$(echo $adb_secret_scope_payload | curl -sS -X POST -H \"$authHeader\" -H \"$adbSPMgmtToken\" -H \"$adbResourceId\" --data-binary \"@-\" \"https://${ADB_WORKSPACE_URL}/api/2.0/secrets/scopes/create\")\n\nfunction createKey() {\n    local keyName=$1\n    local secretValue=$2\n    json_payload=$(\n        jq -n -c \\\n            --arg sc \"$ADB_SECRET_SCOPE_NAME\" \\\n            --arg k \"$keyName\" \\\n            --arg v \"$secretValue\" \\\n            '{\n            scope: $sc,\n            key: $k,\n            string_value: $v\n        }'\n    )\n    response=$(echo $json_payload | curl -sS -X POST -H \"$authHeader\" -H \"$adbSPMgmtToken\" -H \"$adbResourceId\" --data-binary \"@-\" \"https://${ADB_WORKSPACE_URL}/api/2.0/secrets/put\")\n    echo $response\n\n}\n\ncreateKey \"LogAWkspId\" \"$ADB_LOG_WKSP_ID\"\ncreateKey \"LogAWkspkey\" \"$ADB_LOG_WKSP_KEY\"\nC_ADB_PAT_TOKEN=$(sed -e 's/[\\\"\\\\]//g' <<<$ADB_PAT_TOKEN)\ncreateKey \"dbPATKey\" \"$C_ADB_PAT_TOKEN\"\ncreateKey \"stgAccessKey\" \"$STORAGE_ACCESS_KEY\"\n\necho \"$json\" >\"$AZ_SCRIPTS_OUTPUT_PATH\"\n\n# tail -f /dev/null"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.Resources/deploymentScripts', 'createAdbPATToken')]"
@@ -3042,7 +2879,6 @@
       "dependsOn": [
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'DatabricksWorkspace')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'StorageAccount')]",
-        "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'EventHub')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'KeyVault')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'LogAnalytics')]",
         "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, variables('resourceGroupName')), 'Microsoft.Resources/deployments', 'ManagedIdentity')]",
