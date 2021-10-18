@@ -22,6 +22,13 @@ curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
     --form path="/databricks/init/capture_log_metrics.sh" \
     --form overwrite=true
 
+echo "Upload init script to /databricks/init/library_install.sh"
+curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
+    https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
+    --form contents=@"init_scripts/library_install.sh" \
+    --form path="/databricks/init/library_install.sh" \
+    --form overwrite=true
+
 echo "Download Sample notebooks"
 mkdir -p notebooks && cd notebooks
 curl -L \
