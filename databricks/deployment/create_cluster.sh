@@ -7,7 +7,8 @@ DATABRICKS_SPARK_CONF='{
     }'
 DATABRICKS_INIT_CONFIG='{
         "dbfs": {
-            "destination": "dbfs:/databricks/init/capture_log_metrics.sh"
+            "destination": "dbfs:/databricks/init/capture_log_metrics.sh",
+            "destination": "dbfs:/databricks/init/library_install.sh"
         }
     }'
 DATABRICKS_ENV_VARS='{
