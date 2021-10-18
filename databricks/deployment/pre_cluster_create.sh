@@ -11,7 +11,8 @@ adbResourceId="X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID"
 echo "Download init script"
 mkdir -p init_scripts && cd init_scripts
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/init_scripts/capture_log_metrics.sh"
+    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/init_scripts/capture_log_metrics.sh" \
+    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/init_scripts/library_install.sh"
 cd $USER_FOLDER
 
 echo "Upload init script to /databricks/init/capture_log_metrics.sh"
