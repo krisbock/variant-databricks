@@ -5,14 +5,14 @@ DATABRICKS_SPARK_CONF='{
         "spark.databricks.delta.preview.enabled": "true",
         "spark.eventLog.unknownRecord.maxSize":"16m"
     }'
-DATABRICKS_INIT_CONFIG='{
+DATABRICKS_INIT_CONFIG='[{
         "dbfs": {
             "destination": "dbfs:/databricks/init/capture_log_metrics.sh"
         },
         "dbfs": {
             "destination": "dbfs:/databricks/init/library_install.sh"
         }
-    }'
+    }]'
 DATABRICKS_ENV_VARS='{
         "LOG_ANALYTICS_WORKSPACE_ID": "{{secrets/'$ADB_SECRET_SCOPE_NAME'/LogAWkspId}}",
         "LOG_ANALYTICS_WORKSPACE_KEY": "{{secrets/'$ADB_SECRET_SCOPE_NAME'/LogAWkspkey}}"

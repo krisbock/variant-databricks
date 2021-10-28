@@ -1739,6 +1739,17 @@
                 false
               ]
             },
+            "enablePurgeProtection": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Specifies whether protection against purge is enabled for this vault."
+              },
+              "allowedValues": [
+                true,
+                false
+              ]
+            },            
             "tenantId": {
               "type": "string",
               "defaultValue": "[subscription().tenantId]",
@@ -1778,6 +1789,7 @@
               "properties": {
                 "enabledForDeployment": "[parameters('enabledForDeployment')]",
                 "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "enablePurgeProtection": "[parameters('enablePurgeProtection')]",
                 "tenantId": "[parameters('tenantId')]",
                 "accessPolicies": [
                   {
@@ -2610,7 +2622,7 @@
             },
             "adb_spark_version": {
               "type": "string",
-              "defaultValue": "7.3.x-scala2.12"
+              "defaultValue": "8.1.x-scala2.12"
             },
             "adb_node_type": {
               "type": "string",

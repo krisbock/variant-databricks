@@ -31,9 +31,6 @@ param sccRelayDomains array = []
 @description('List of Metastore domain name')
 param metastoreDomains array = []
 
-@description('List of Event Hub endpoint domain name')
-param eventHubEndpointDomains array = []
-
 @description('List of Artifact Blob storage primary domain name')
 param artifactBlobStoragePrimaryDomains array = []
 
@@ -167,22 +164,6 @@ resource firewallName_resource 'Microsoft.Network/azureFirewalls@2021-02-01' = {
               sourceIpGroups: []
               destinationIpGroups: []
               destinationFqdns: metastoreDomains
-              destinationPorts: [
-                '*'
-              ]
-            }
-            {
-              name: 'Event Hub endpoint'
-              protocols: [
-                'TCP'
-              ]
-              sourceAddresses: [
-                '*'
-              ]
-              destinationAddresses: []
-              sourceIpGroups: []
-              destinationIpGroups: []
-              destinationFqdns: eventHubEndpointDomains
               destinationPorts: [
                 '*'
               ]
