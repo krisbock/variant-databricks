@@ -1749,7 +1749,18 @@
                 true,
                 false
               ]
-            },            
+            },   
+            "enableSoftDelete": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Specifies whether protection against deletion is enabled for this vault."
+              },
+              "allowedValues": [
+                true,
+                false
+              ]
+            },                        
             "tenantId": {
               "type": "string",
               "defaultValue": "[subscription().tenantId]",
@@ -1790,6 +1801,7 @@
                 "enabledForDeployment": "[parameters('enabledForDeployment')]",
                 "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
                 "enablePurgeProtection": "[parameters('enablePurgeProtection')]",
+                "enableSoftDelete" : "[parameters('enableSoftDelete')]",
                 "tenantId": "[parameters('tenantId')]",
                 "accessPolicies": [
                   {
