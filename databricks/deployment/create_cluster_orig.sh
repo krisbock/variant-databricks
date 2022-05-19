@@ -2,13 +2,21 @@
 
 # Databricks cluster config variables
 DATABRICKS_SPARK_CONF='{
-        "spark.databricks.delta.preview.enabled": "true"
+        "spark.databricks.delta.preview.enabled": "true",
+        "spark.eventLog.unknownRecord.maxSize":"16m"
     }'
 DATABRICKS_INIT_CONFIG='[{
+        "dbfs": {
+            "destination": "dbfs:/databricks/init/capture_log_metrics.sh"
+        },
         "dbfs": {
             "destination": "dbfs:/databricks/init/library_install.sh"
         }
     }]'
+DATABRICKS_ENV_VARS='{
+        "LOG_ANALYTICS_WORKSPACE_ID": "{{secrets/'$ADB_SECRET_SCOPE_NAME'/LogAWkspId}}",
+        "LOG_ANALYTICS_WORKSPACE_KEY": "{{secrets/'$ADB_SECRET_SCOPE_NAME'/LogAWkspkey}}"
+    }'
 DATABRICKS_CLUSTER_LOG='{
     "dbfs": {
       "destination": "dbfs:/logs"
@@ -34,6 +42,7 @@ CLUSTER_CREATE_JSON_STRING=$(jq -n -c \
     --arg spc "$DATABRICKS_SPARK_CONF" \
     --arg at "$DATABRICKS_AUTO_TERMINATE_MINUTES" \
     --arg is "$DATABRICKS_INIT_CONFIG" \
+    --arg ev "$DATABRICKS_ENV_VARS" \
     --arg cl "$DATABRICKS_CLUSTER_LOG" \
     '{cluster_name: $cn,
                     idempotency_token: $cn,
@@ -43,6 +52,7 @@ CLUSTER_CREATE_JSON_STRING=$(jq -n -c \
                     autotermination_minutes: ($at|tonumber),
                     spark_conf: ($spc|fromjson),
                     init_scripts: ($is|fromjson),
+                    spark_env_vars: ($ev|fromjson),
                     cluster_log_conf: ($cl|fromjson)
                     }')
 

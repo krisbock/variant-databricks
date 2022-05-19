@@ -11,16 +11,9 @@ adbResourceId="X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID"
 echo "Download init script"
 mkdir -p init_scripts && cd init_scripts
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/init_scripts/capture_log_metrics.sh" \
     -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/init_scripts/library_install.sh"
 cd $USER_FOLDER
 
-echo "Upload init script to /databricks/init/capture_log_metrics.sh"
-curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
-    https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
-    --form contents=@"init_scripts/capture_log_metrics.sh" \
-    --form path="/databricks/init/capture_log_metrics.sh" \
-    --form overwrite=true
 
 echo "Upload init script to /databricks/init/library_install.sh"
 curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
@@ -32,8 +25,6 @@ curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
 echo "Download Sample notebooks"
 mkdir -p notebooks && cd notebooks
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/notebooks/azure_runner_docs_example.ipynb" \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/notebooks/timezone_test.ipynb" \
     -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/notebooks/VariantSpark_example.ipynb" 
 cd $USER_FOLDER
 
@@ -50,37 +41,20 @@ for notebook in notebooks/*.ipynb; do
         --form overwrite=true
 done
 
-echo "Download Loganalytics jar files"
-mkdir -p jars && cd jars
+echo "Download Sample Data"
+mkdir -p data && cd data
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/spark-listeners-loganalytics_3.0.1_2.12-1.0.0.jar" \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/spark-listeners_3.0.1_2.12-1.0.0.jar"
+    -O "https://raw.githubusercontent.com/aehrc/VariantSpark/master/data/chr22-labels-hail.csv" \
+    -O "https://raw.githubusercontent.com/aehrc/VariantSpark/master/data/chr22_1000.vcf"
 cd $USER_FOLDER
 
-echo "Download VariantSpark  jar files"
-mkdir -p jars && cd jars
-curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/variant-spark_2.11-0.4.0-SNAPSHOT-all.jar" 
-cd $USER_FOLDER
-
-echo "Upload jar files"
-for jar_file in jars/*.jar; do
-    filename=$(basename $jar_file)
-    echo "Upload $jar_file file to DBFS path"
+echo "Upload Sample data"
+for file in data/*.*; do
+    filename=$(basename $file)
+    echo "Upload sample data $file to workspace"
     curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
         https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
-        --form filedata=@"$jar_file" \
-        --form path="/FileStore/jars/$filename" \
+        --form contents=@"init_scripts/$file" \
+        --form path="/databricks/Filestore/$filename" \
         --form overwrite=true
 done
-
-# Get ADB log categories
-adb_logs_types=$(az monitor diagnostic-settings categories list --resource $ADB_WORKSPACE_ID | jq -c '.value[] | {category: .name, enabled:true}' | jq --slurp .)
-
-# Enable monitoring for all the categories
-adb_monitoring=$(az monitor diagnostic-settings create \
-    --name sparkmonitor \
-    --event-hub $EVENT_HUB_ID \
-    --event-hub-rule "RootManageSharedAccessKey" \
-    --resource $ADB_WORKSPACE_ID \
-    --logs "$adb_logs_types")
