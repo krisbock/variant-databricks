@@ -25,7 +25,8 @@ curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
 echo "Download Sample notebooks"
 mkdir -p notebooks && cd notebooks
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/notebooks/VariantSpark_example.ipynb" 
+    -O "https://raw.githubusercontent.com/aehrc/VariantSpark/master/examples/run_importance_chr22_with_hail.ipynb" 
+# -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/notebooks/VariantSpark_example.ipynb" 
 cd $USER_FOLDER
 
 echo "Upload Sample notebooks"
@@ -54,7 +55,7 @@ for file in data/*.*; do
     echo "Upload sample data $file to workspace"
     curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
         https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
-        --form contents=@"init_scripts/$file" \
+        --form contents=@"$file" \
         --form path="/databricks/Filestore/$filename" \
         --form overwrite=true
 done
