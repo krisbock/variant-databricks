@@ -9,12 +9,6 @@ adbResourceId="X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID"
 
 libraries='[
         {
-                "jar": "dbfs:/FileStore/jars/spark-listeners_3.0.1_2.12-1.0.0.jar"
-        },
-        {
-                "jar": "dbfs:/FileStore/jars/spark-listeners-loganalytics_3.0.1_2.12-1.0.0.jar"
-        },
-        {
                 "jar": "dbfs:/FileStore/jars/variant-spark_2.11-0.4.0-SNAPSHOT-all.jar"
         },
         {
@@ -26,7 +20,79 @@ libraries='[
             "maven": {
                 "coordinates": "com.microsoft.azure:azure-eventhubs-spark_2.12:2.3.18"
             }
-        }
+        },
+        {
+            "maven": {
+                "coordinates": "au.csiro.aehrc.variant-spark:variant-spark_2.11:0.0.2-SNAPSHOT",
+                "repo": "https://oss.sonatype.org/content/repositories/snapshots"
+            }
+        },        
+        {
+            "pypi": {
+            "package": "Sphinx==3.3.1",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "sphinx-rtd-theme==0.5.0",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "nbsphinx==0.8.0",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "pylint==2.6.0",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        }, 
+        {
+            "pypi": {
+            "package": "pytest==6.2.2",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "twine==3.2.0",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },    
+        {
+            "pypi": {
+            "package": "pandas==1.1.4",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "typedecorator==0.0.5",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },   
+        {
+            "pypi": {
+            "package": "Jinja2==3.0.3",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },
+        {
+            "pypi": {
+            "package": "hail==0.2.74",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        },   
+        {
+            "pypi": {
+            "package": "variant-spark",
+            "repo": "https://my-pypi-mirror.com"
+            }
+        }            
     ]'
 
 library_config=$(
