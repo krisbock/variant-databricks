@@ -9,7 +9,7 @@ adbResourceId="X-Databricks-Azure-Workspace-Resource-Id:$ADB_WORKSPACE_ID"
 
 libraries='[
         {
-                "jar": "dbfs:/FileStore/jars/variant-spark_2.11-0.4.0-SNAPSHOT-all.jar"
+                "jar": "dbfs:/FileStore/jars/variant-spark_2.11-0.5.0-a0-dev0-all.jar"
         },
         {
             "maven": {

@@ -26,7 +26,7 @@ curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
 echo "Download VariantSpark  jar files"
 mkdir -p jars && cd jars
 curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/variant-spark_2.11-0.4.0-SNAPSHOT-all.jar" 
+    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/variant-spark_2.11-0.5.0-a0-dev0-all.jar" 
 cd $USER_FOLDER
 
 echo "Upload jar files"
