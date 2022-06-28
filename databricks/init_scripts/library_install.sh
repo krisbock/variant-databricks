@@ -12,8 +12,8 @@
 # /databricks/python/bin/pip install hail==0.2.74
 # /databricks/python/bin/pip install variant-spark
 
-apt-get update
-apt-get install \
+sudo apt-get update
+sudo apt-get install \
     openjdk-8-jdk-headless \
     g++ \
     python3 python3-pip \
@@ -22,4 +22,4 @@ apt-get install \
 
 git clone https://github.com/hail-is/hail.git
 cd hail/hail
-make install-on-cluster HAIL_COMPILE_NATIVES=1 SCALA_VERSION=2.12 SPARK_VERSION=3.1.2
+sudo make install-on-cluster HAIL_COMPILE_NATIVES=1 SCALA_VERSION=2.12 SPARK_VERSION=3.1.2
