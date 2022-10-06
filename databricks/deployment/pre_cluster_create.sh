@@ -22,23 +22,23 @@ curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
     --form path="/databricks/init/library_install.sh" \
     --form overwrite=true
 
-## added library 25/05
-echo "Download VariantSpark  jar files"
-mkdir -p jars && cd jars
-curl -L \
-    -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/variant-spark_2.11-0.5.0-a0-dev0-all.jar" 
-cd $USER_FOLDER
+# ## added library 25/05
+# echo "Download VariantSpark  jar files"
+# mkdir -p jars && cd jars
+# curl -L \
+#     -O "https://raw.githubusercontent.com/krisbock/variant-databricks/main/databricks/jars/variant-spark_2.11-0.5.0-a0-dev0-all.jar" 
+# cd $USER_FOLDER
 
-echo "Upload jar files"
-for jar_file in jars/*.jar; do
-    filename=$(basename $jar_file)
-    echo "Upload $jar_file file to DBFS path"
-    curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
-        https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
-        --form filedata=@"$jar_file" \
-        --form path="/FileStore/jars/$filename" \
-        --form overwrite=true
-done
+# echo "Upload jar files"
+# for jar_file in jars/*.jar; do
+#     filename=$(basename $jar_file)
+#     echo "Upload $jar_file file to DBFS path"
+#     curl -sS -X POST -H "$authHeader" -H "$adbSPMgmtToken" -H "$adbResourceId" \
+#         https://${ADB_WORKSPACE_URL}/api/2.0/dbfs/put \
+#         --form filedata=@"$jar_file" \
+#         --form path="/FileStore/jars/$filename" \
+#         --form overwrite=true
+# done
 ####
 
 #echo "Install libraries"

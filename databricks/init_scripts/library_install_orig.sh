@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-/databricks/python/bin/pip install variant-spark==0.3.0
+/databricks/python/bin/pip install variant-spark==0.5.2
 /databricks/python/bin/pip install bokeh
 /databricks/python/bin/pip install hail==0.2.16
 /databricks/python/bin/pip uninstall --yes tornado
